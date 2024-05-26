@@ -1,5 +1,4 @@
 #include "eval.h"
-
 #include "../chess/move_gen.h"
 
 // Evaluation is exactly the same as PeSTO's texel-tuned tables. Using this
