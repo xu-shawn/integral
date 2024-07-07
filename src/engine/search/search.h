@@ -10,6 +10,7 @@
 constexpr int kMaxSearchDepth = 100;
 
 enum class NodeType {
+  kRoot,
   kPV,
   kNonPV
 };
@@ -45,7 +46,7 @@ class Search {
   Score QuiescentSearch(Score alpha, Score beta, SearchStackEntry *stack);
 
   template <NodeType node_type>
-  Score PVSearch(int depth, Score alpha, Score beta, SearchStackEntry *stack);
+  Score PVSearch(int depth, Score alpha, Score beta, SearchStackEntry *stack, bool cut_node);
 
   [[nodiscard]] bool ShouldQuit();
 

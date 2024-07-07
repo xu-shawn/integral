@@ -16,10 +16,21 @@ struct TimeConfig {
   int move_time = 0;
   int time_left = 0;
   int increment = 0;
+
+  [[nodiscard]] bool HasBeenModified() const {
+    static const TimeConfig default_config;
+    return !(*this == default_config);
+  }
+
+  bool operator==(const TimeConfig &other) const {
+    return infinite == other.infinite && depth == other.depth &&
+           move_time == other.move_time && time_left == other.time_left &&
+           increment == other.increment;
+  }
 };
 
 using SteadyClock = std::chrono::steady_clock;
-using TimeStamp = U32;
+using TimeStamp = U64;
 
 [[maybe_unused]] static U64 GetCurrentTime() {
   const auto duration = SteadyClock::now().time_since_epoch();
