@@ -12,10 +12,10 @@ namespace nnue {
 class Accumulator;
 
 struct Network {
-  MultiArray<I16, arch::kInputLayerSize, arch::kHiddenLayerSize>
+  alignas(64) MultiArray<I16, arch::kInputLayerSize, arch::kHiddenLayerSize>
       feature_weights;
-  MultiArray<I16, arch::kHiddenLayerSize> feature_biases;
-  MultiArray<I16, 2, arch::kHiddenLayerSize> output_weights;
+  alignas(64) MultiArray<I16, arch::kHiddenLayerSize> feature_biases;
+  alignas(64) MultiArray<I16, 2, arch::kHiddenLayerSize> output_weights;
   I16 output_bias;
 };
 
