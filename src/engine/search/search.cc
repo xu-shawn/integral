@@ -1,10 +1,11 @@
 #include "search.h"
 
-#include <thread>
 #include <algorithm>
+#include <thread>
 
 #include "constants.h"
 #include "fmt/format.h"
+#include "history/bonus.h"
 #include "move_picker.h"
 #include "syzygy/syzygy.h"
 #include "time_mgmt.h"
@@ -845,28 +846,40 @@ Score Search::PVSearch(Thread &thread,
 
       // Ensure the reduction doesn't give us a depth below 0
       reduction = std::clamp<int>(reduction, 0, new_depth - 1);
+      const int d = new_depth - reduction;
 
       // Null window search at reduced depth to see if the move has potential
       score = -PVSearch<NodeType::kNonPV>(
-          thread, new_depth - reduction, -alpha - 1, -alpha, stack + 1, true);
+          thread, d, -alpha - 1, -alpha, stack + 1, true);
 
-      if ((needs_full_search = score > alpha && reduction != 0)) {
+      if ((needs_full_search = score > alpha && new_depth > d)) {
         // Search deeper or shallower depending on if the result of the
         // reduced-depth search indicates a promising score
         const bool do_deeper_search = score > (best_score + 35 + 2 * new_depth);
         const bool do_shallower_search = score < best_score + 8;
         new_depth += do_deeper_search - do_shallower_search;
+
+        // The move has potential from a reduced depth search,
+        // therefore we search it with a null window
+        if (new_depth > d) {
+          score = -PVSearch<NodeType::kNonPV>(
+              thread, new_depth, -alpha - 1, -alpha, stack + 1, !cut_node);
+        }
+
+        if (score > beta) {
+          thread.history.continuation_history->UpdateSingleMoveScore(
+              board.GetPrevState(), stack, history::HistoryBonus(depth), move);
+        } else {
+          thread.history.continuation_history->UpdateSingleMoveScore(
+              board.GetPrevState(), stack, -history::HistoryBonus(depth), move);
+        }
       }
-    } else {
-      // If we didn't perform late move reduction, then we search this move at
-      // full depth with a null window search if we don't expect it to be a PV
-      // move
-      needs_full_search = !in_pv_node || moves_seen >= 1;
     }
 
-    // Either the move has potential from a reduced depth search or it's not
-    // expected to be a PV move, therefore we search it with a null window
-    if (needs_full_search) {
+    // If we didn't perform late move reduction, then we search this move at
+    // full depth with a null window search if we don't expect it to be a PV
+    // move
+    else if (!in_pv_node || moves_seen >= 1) {
       score = -PVSearch<NodeType::kNonPV>(
           thread, new_depth, -alpha - 1, -alpha, stack + 1, !cut_node);
     }
