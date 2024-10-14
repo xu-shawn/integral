@@ -73,12 +73,12 @@ class CorrectionHistory {
     const I32 major_correction =
         major_table_[state.turn][GetMajorTableIndex(state)];
     const I32 correction =
-        pawn_correction +
-        (non_pawn_white_correction + non_pawn_black_correction) / 2 +
-        (minor_correction + major_correction) / 2;
+        83 * pawn_correction +
+        (non_pawn_white_correction + non_pawn_black_correction) * 87 +
+        minor_correction * 79 + major_correction * 45;
     const I32 adjusted_score =
         static_cast<I32>(static_eval) +
-        correction / static_cast<int>(corr_history_scale);
+        correction / (static_cast<int>(corr_history_scale) * 128);
     // Ensure no static evaluations are mate scores
     return std::clamp(
         adjusted_score, -kMateInMaxPlyScore + 1, kMateInMaxPlyScore - 1);
