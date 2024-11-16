@@ -939,6 +939,7 @@ Score Search::PVSearch(Thread &thread,
 
     // Perform a full window search on this move if it's known to be good
     if (in_pv_node && (score > alpha || moves_seen == 0)) {
+      if (move == tt_move) new_depth = std::max(new_depth, 1);
       score = -PVSearch<NodeType::kPV>(
           thread, new_depth, -beta, -alpha, stack + 1, false);
     }
