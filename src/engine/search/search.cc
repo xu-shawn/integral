@@ -713,6 +713,8 @@ Score Search::PVSearch(Thread &thread,
           board.UndoMove();
 
           if (score >= pc_beta) {
+            history.capture_history->UpdateScore(
+                state, stack, probcut_depth + 1);
             const TranspositionTableEntry new_tt_entry(
                 state.zobrist_key,
                 probcut_depth,
