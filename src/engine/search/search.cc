@@ -1112,7 +1112,9 @@ Score Search::PVSearch(Thread &thread,
     // Since "good" captures are expected to be the best moves, we apply a
     // penalty to all captures even in the case where the best move was quiet
     history.capture_history->Penalize(state, depth, captures);
-  } else {
+  } else if (!prev_stack->capture_move &&
+             !(prev_stack->move.GetType() == MoveType::kPromotion) &&
+             !prev_stack->move.IsNull()) {
     history.quiet_history->UpdateMoveScore(FlipColor(state.turn),
                                            prev_stack->move,
                                            prev_stack->threats,
