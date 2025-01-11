@@ -1,5 +1,6 @@
 #include "evaluation.h"
 
+#include "nnue/accumulator.h"
 #include "nnue/nnue.h"
 
 namespace eval {
@@ -15,6 +16,10 @@ Score Evaluate(Board &board) {
       kSeePieceScores[kQueen] * state.Queens().PopCount();
 
   return network_eval * (26500 + material_phase) / 32768;
+}
+
+void HintCommonParentPosition(Board &board) {
+  board.GetAccumulator()->ApplyChanges();
 }
 
 bool StaticExchange(Move move, int threshold, const BoardState &state) {
