@@ -1230,8 +1230,7 @@ Score Search::PVSearch(Thread &thread,
     if (!stack->in_check && (!best_move || !best_move.IsNoisy(state)) &&
         ((best_score < stack->static_eval && best_score < beta) ||
          (best_score > stack->static_eval && best_move))) {
-      history.correction_history->UpdateScore(
-          state, stack, best_score, tt_flag, depth);
+      history.correction_history->UpdateScore(state, stack, best_score, depth);
     }
   }
 

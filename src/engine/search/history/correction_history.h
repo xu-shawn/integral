@@ -23,13 +23,7 @@ class CorrectionHistory {
   void UpdateScore(const BoardState &state,
                    StackEntry *stack,
                    Score search_score,
-                   TranspositionTableEntry::Flag score_type,
                    int depth) {
-    if (!IsStaticEvalWithinBounds(
-            stack->static_eval, search_score, score_type)) {
-      return;
-    }
-
     const Score bonus = CalculateBonus(stack->static_eval, search_score, depth);
 
     // Update pawn table score
@@ -101,16 +95,6 @@ class CorrectionHistory {
 
   void UpdateTableScore(Score &current_score, Score bonus) {
     current_score += ScaleBonus(current_score, bonus, 1024);
-  }
-
-  [[nodiscard]] bool IsStaticEvalWithinBounds(
-      Score static_eval,
-      Score search_score,
-      TranspositionTableEntry::Flag score_type) const {
-    const bool failed_high = score_type == TranspositionTableEntry::kLowerBound;
-    const bool failed_low = score_type == TranspositionTableEntry::kUpperBound;
-    return !(failed_high && static_eval >= search_score) &&
-           !(failed_low && static_eval < search_score);
   }
 
   [[nodiscard]] int GetPawnTableIndex(const BoardState &state) const {
