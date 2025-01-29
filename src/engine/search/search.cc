@@ -355,6 +355,8 @@ Score Search::QuiescentSearch(Thread &thread,
       continue;
     }
 
+    if (history.capture_history->GetScore(state, move) < 0) continue;
+
     // Prefetch the TT entry for the next move as early as possible
     transposition_table_.Prefetch(board.PredictKeyAfter(move));
 
