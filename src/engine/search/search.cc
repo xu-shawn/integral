@@ -691,7 +691,8 @@ Score Search::PVSearch(Thread &thread,
           depth * kRevFutMargin - improving_margin -
           kRevFutOppWorseningMargin * opponent_worsening +
           (stack - 1)->history_score / kRevFutHistoryDiv;
-      if (stack->eval - std::max<int>(futility_margin, kRevFutMinMargin) >= beta) {
+      if (stack->eval - std::max<int>(futility_margin, kRevFutMinMargin) >=
+          beta) {
         return std::lerp(stack->eval, beta, kRevFutLerpFactor);
       }
     }
@@ -974,8 +975,11 @@ Score Search::PVSearch(Thread &thread,
         // Extend more if the TT move is singular by a big margin
         if (!in_pv_node &&
             tt_move_excluded_score < new_beta - kSeDoubleMargin) {
-          extensions = 2 + (is_quiet && tt_move_excluded_score <
-                                            new_beta - kSeTripleMargin);
+          extensions =
+              2 + (is_quiet &&
+                   tt_move_excluded_score <
+                       new_beta - kSeTripleMargin +
+                           history.tt_move_history->GetScore(state) / 128);
           depth += depth < kSeDepthExtensionDepth;
         } else {
           extensions = 1;
@@ -1197,6 +1201,12 @@ Score Search::PVSearch(Thread &thread,
     // Since "good" captures are expected to be the best moves, we apply a
     // penalty to all captures even in the case where the best move was quiet
     history.capture_history->Penalize(state, depth, captures);
+
+    if (!in_pv_node) {
+      I16 bonus =
+          (best_move == tt_move) ? 800 : std::max(-600 * moves_seen, -3000);
+      history.tt_move_history->UpdateTableScore(state, bonus);
+    }
   }
   // This node failed low, meaning the parent node will fail high. The previous
   // move will already be given a history bonus by the parent node in the beta

@@ -1,12 +1,15 @@
 #ifndef INTEGRAL_HISTORY_H
 #define INTEGRAL_HISTORY_H
 
+#include <memory>
+
 #include "../../../chess/board.h"
 #include "capture_history.h"
 #include "continuation_history.h"
 #include "correction_history.h"
 #include "pawn_history.h"
 #include "quiet_history.h"
+#include "tt_move_history.h"
 
 namespace search::history {
 
@@ -22,6 +25,7 @@ class History {
     correction_history = std::make_unique<CorrectionHistory>();
     capture_history = std::make_unique<CaptureHistory>();
     pawn_history = std::make_unique<PawnHistory>();
+    tt_move_history = std::make_unique<TTMoveHistory>();
   }
 
   // Reinitialize the history objects for quicker clearing
@@ -51,6 +55,7 @@ class History {
   std::unique_ptr<PawnHistory> pawn_history;
   std::unique_ptr<ContinuationHistory> continuation_history;
   std::unique_ptr<CorrectionHistory> correction_history;
+  std::unique_ptr<TTMoveHistory> tt_move_history;
 };
 
 }  // namespace search::history
