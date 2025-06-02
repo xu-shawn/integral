@@ -55,7 +55,9 @@ void TranspositionTable::Save(TranspositionTableEntry *old_entry,
     old_entry->flag = new_entry.flag;
     old_entry->was_in_pv = new_entry.was_in_pv;
     old_entry->static_eval = new_entry.static_eval;
-  }
+  } else if (old_entry->depth >= 5 &&
+             old_entry->flag != TranspositionTableEntry::kExact)
+    old_entry->depth--;
 }
 
 U32 TranspositionTable::GetAgeDelta(
