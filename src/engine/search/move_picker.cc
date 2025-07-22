@@ -123,7 +123,11 @@ Move MovePicker::Next() {
 
   if (stage_ == Stage::kQuiets) {
     if (moves_idx_ < quiets_.Size()) {
-      return SelectionSort(quiets_, moves_idx_++);
+      if (moves_idx_ <= 4) {
+        return SelectionSort(quiets_, moves_idx_++);
+      }
+
+      return quiets_[moves_idx_++];
     }
 
     stage_ = Stage::kBadNoisys;
