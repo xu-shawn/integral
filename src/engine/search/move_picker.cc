@@ -127,7 +127,7 @@ Move MovePicker::Next() {
         return SelectionSort(quiets_, moves_idx_++);
       }
 
-      return quiets_[moves_idx_++];
+      return quiets_[moves_idx_++].move;
     }
 
     stage_ = Stage::kBadNoisys;
