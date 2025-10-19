@@ -815,7 +815,7 @@ Score Searcher::PVSearch(Thread &thread,
               history.correction_history->GetContEntry(state, move);
           stack->history_score = history.GetMoveScore(state, move, stack);
 
-          const int probcut_depth = depth - 3;
+          const int probcut_depth = depth - 4;
           thread.nodes_searched.fetch_add(1, std::memory_order_relaxed);
 
           board.MakeMove(move);
