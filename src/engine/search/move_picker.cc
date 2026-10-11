@@ -40,9 +40,9 @@ MovePicker::MovePicker(MovePickerType type,
                        Move tt_move,
                        history::History &history,
                        StackEntry *stack,
+                       int depth,
                        int see_threshold,
-                       bool force_evasions,
-                       int depth)
+                       bool force_evasions)
     : board_(board),
       tt_move_(tt_move),
       type_(type),
@@ -50,9 +50,9 @@ MovePicker::MovePicker(MovePickerType type,
       stack_(stack),
       stage_(Stage::kTTMove),
       moves_idx_(0),
+      depth_(depth),
       see_threshold_(see_threshold),
-      force_evasions_(force_evasions),
-      depth_(depth) {}
+      force_evasions_(force_evasions) {}
 
 Move MovePicker::Next() {
   const auto &state = board_.GetState();

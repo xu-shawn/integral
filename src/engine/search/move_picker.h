@@ -40,9 +40,9 @@ class MovePicker {
              Move tt_move,
              history::History &history,
              StackEntry *stack,
+             int depth,
              int see_threshold = 0,
-             bool force_evasions = false,
-             int depth = 0);
+             bool force_evasions = false);
 
   Move Next();
 

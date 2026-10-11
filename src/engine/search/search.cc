@@ -367,8 +367,14 @@ Score Searcher::QuiescentSearch(Thread &thread,
       tt_entry->flag != TranspositionTableEntry::kUpperBound &&
       !tt_move.IsNoisy(state);
 
-  MovePicker move_picker(
-      MovePickerType::kQuiescence, board, tt_move, history, stack, 0, evasions);
+  MovePicker move_picker(MovePickerType::kQuiescence,
+                         board,
+                         tt_move,
+                         history,
+                         stack,
+                         0,
+                         0,
+                         evasions);
   while (const auto move = move_picker.Next()) {
     // Stop searching since all the good noisy moves have been searched,
     // unless we need to find a quiet evasion
@@ -821,8 +827,13 @@ Score Searcher::PVSearch(Thread &thread,
                                   : Move::NullMove();
 
         int moves_seen = 0;
-        MovePicker move_picker(
-            MovePickerType::kNoisy, board, pc_tt_move, history, stack, pc_see);
+        MovePicker move_picker(MovePickerType::kNoisy,
+                               board,
+                               pc_tt_move,
+                               history,
+                               stack,
+                               depth,
+                               pc_see);
         while (const auto move = move_picker.Next()) {
           if (move == stack->excluded_tt_move || !board.IsMoveLegal(move)) {
             continue;
