@@ -41,7 +41,8 @@ MovePicker::MovePicker(MovePickerType type,
                        history::History &history,
                        StackEntry *stack,
                        int see_threshold,
-                       bool force_evasions)
+                       bool force_evasions,
+                       int depth)
     : board_(board),
       tt_move_(tt_move),
       type_(type),
@@ -50,7 +51,8 @@ MovePicker::MovePicker(MovePickerType type,
       stage_(Stage::kTTMove),
       moves_idx_(0),
       see_threshold_(see_threshold),
-      force_evasions_(force_evasions) {}
+      force_evasions_(force_evasions),
+      depth_(depth) {}
 
 Move MovePicker::Next() {
   const auto &state = board_.GetState();
@@ -207,7 +209,8 @@ void MovePicker::GenerateAndScoreMoves(List<ScoredMove, kMaxMoves> &list) {
 
     // Order moves the policy network likes earlier
     for (int i = 0; i < list.Size(); ++i) {
-      list[i].score += (logits[i] >> 11) * kQuietPolicyWeight / 1024;
+      list[i].score +=
+          (logits[i] >> 11) * kQuietPolicyWeight / (depth_ / 2 + 1) / 1024;
     }
   }
 }
