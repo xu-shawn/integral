@@ -464,9 +464,14 @@ Score Searcher::QuiescentSearch(Thread &thread,
   }
 
   // Return an interpolated score toward beta for a safety "cushion"
-  if (best_score >= beta && std::abs(best_score) < kTBWinInMaxPlyScore) {
-    best_score =
-        static_cast<Score>(std::lerp(best_score, beta, kQsFailHighLerpFactor));
+  if (std::abs(best_score) < kTBWinInMaxPlyScore) {
+    if (best_score >= beta) {
+      best_score = static_cast<Score>(
+          std::lerp(best_score, beta, kQsFailHighLerpFactor));
+    } else if (best_score <= alpha) {
+      best_score =
+          static_cast<Score>(std::lerp(best_score, beta, kQsFailLowLerpFactor));
+    }
   }
 
   TranspositionTableEntry::Flag tt_flag;
